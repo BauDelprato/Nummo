@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nummo/features/dashboard/dashboard_screen.dart';
 
 import 'package:nummo/shared/widgets/custom_button.dart';
 import 'package:nummo/shared/widgets/input_field.dart';
@@ -64,8 +65,12 @@ class LoginScreen extends StatelessWidget {
               CustomButton(
                 text: 'Iniciar Sesión',
                 onPressed: () {
-                  // Aquí irá el código para navegar a la RegisterScreen
-                  print('Ir a Registro');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(), 
+                    ),
+                  );
                 },
               ),
             ],
