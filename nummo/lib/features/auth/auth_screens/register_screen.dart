@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nummo/features/auth/auth_screens/login_screen.dart';
 
 import 'package:nummo/shared/widgets/custom_button.dart';
 import 'package:nummo/shared/widgets/input_field.dart';
@@ -34,8 +35,6 @@ class RegisterScreen extends StatelessWidget {
                 ),
               ),
               
-              // El Spacer() funciona como un resorte que empuja los elementos, 
-              // distribuyendo el espacio vacío dinámicamente.
               const Spacer(), 
 
               //BOTÓN REGISTRARSE CON GOOGLE
@@ -76,8 +75,12 @@ class RegisterScreen extends StatelessWidget {
               CustomButton(
                 text: 'Registrarse',
                 onPressed: () {
-                  // Aquí irá el código para navegar a la RegisterScreen
-                  print('Ir a Registro');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(), 
+                    ),
+                  );
                 },
               ),
             ],
