@@ -2,38 +2,25 @@ import 'package:hive/hive.dart';
 
 part 'savings_model.g.dart';
 
-@HiveType(typeId: 1)
-class SavingsModel extends HiveObject {
+@HiveType(typeId: 4)
+class Savings extends HiveObject {
   @HiveField(0)
-  final String id;
+  double totalSaved;
 
   @HiveField(1)
-  final double amount;
+  double targetAmount;
 
   @HiveField(2)
-  final DateTime date;
+  List<double> depositHistory;
 
-  @HiveField(3)
-  final String? description;
+  Savings({
+    this.totalSaved = 0.0,
+    this.targetAmount = 0.0,
+    List<double>? depositHistory,
+  }) : depositHistory = depositHistory ?? [];
 
-  SavingsModel({
-    required this.id,
-    required this.amount,
-    required this.date,
-    this.description,
-  });
+  double get progressPercentage =>
+      targetAmount > 0 ? (totalSaved / targetAmount).clamp(0.0, 1.0) : 0.0;
 
-  factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(
-    id: json['id'] as String,
-    amount: (json['amount'] as num).toDouble(),
-    date: DateTime.parse(json['date'] as String),
-    description: json['description'] as String?,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'amount': amount,
-    'date': date.toIso8601String(),
-    'description': description,
-  };
+  bool get isTargetReached => totalSaved >= targetAmount && targetAmount > 0;
 }
