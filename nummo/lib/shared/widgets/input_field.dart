@@ -5,6 +5,7 @@ class CustomInputField extends StatelessWidget {
   final bool isRequired;
   final bool isPassword;
   final Widget? suffixIcon; // Para poner el ícono del ojito si hace falta
+  final TextEditingController? controller;
 
   const CustomInputField({
     super.key,
@@ -12,6 +13,7 @@ class CustomInputField extends StatelessWidget {
     this.isRequired = false, // Por defecto no es obligatorio
     this.isPassword = false, // Por defecto muestra el texto normal
     this.suffixIcon,
+    this.controller,
   });
 
   @override
@@ -41,6 +43,7 @@ class CustomInputField extends StatelessWidget {
 
         // 2. CAJA DE TEXTO
         TextField(
+          controller: controller,
           obscureText: isPassword, // Si es true, pone los puntitos (***)
           decoration: InputDecoration(
             filled: true,

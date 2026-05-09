@@ -19,28 +19,34 @@ class AuthService {
   }
 
   Future<User?> login(String email, String password) async {
-    // Simple local auth: find user by email
+    // 1. Busca si existe un usuario con ese email
     final user = _box.values.cast<User?>().firstWhere(
       (u) => u?.email == email,
       orElse: () => null,
     );
-    if (user != null) {
-      await _box.put(_currentUserKey, user);
+    
+    // 2. LA MAGIA: Verificamos si existe Y si la contraseña coincide
+    if (user != null && user.password == password) {
+      await _box.put(_currentUserKey, user.copyWith());
       _authController.add(user);
-      return user;
+      return user; // Todo bien, lo deja pasar
     }
-    return null;
+    
+    // Si la contraseña es incorrecta o no existe, devuelve null
+    return null; 
   }
 
   Future<User?> register(String email, String password, String name) async {
-    // Check if email already exists
+    // Verifica si el email ya existe
     final exists = _box.values.any((u) => u.email == email);
     if (exists) return null;
 
-    final user = User(id: _uuid.v4(), email: email, name: name);
+    // AHORA guardamos también la contraseña ingresada
+    final user = User(id: _uuid.v4(), email: email, name: name, password: password);
+    
+    // Solo guardamos en la BD. No logueamos para que tenga que volver al login
     await _box.put(user.id, user);
-    await _box.put(_currentUserKey, user);
-    _authController.add(user);
+    
     return user;
   }
 
@@ -55,13 +61,12 @@ class AuthService {
   Future<void> updateUser(User user) async {
     await _box.put(user.id, user);
     if (currentUser?.id == user.id) {
-      await _box.put(_currentUserKey, user);
+      await _box.put(_currentUserKey, user.copyWith());
       _authController.add(user);
     }
   }
 
   Future<void> dispose() async {
     await _authController.close();
-    await _box.close();
   }
 }
