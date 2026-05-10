@@ -16,11 +16,15 @@ class User extends HiveObject {
   @HiveField(3)
   final double balance;
 
+  @HiveField(4)
+  final String password;
+
   User({
     required this.id,
     required this.email,
     required this.name,
     this.balance = 0.0,
+    required this.password,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -28,6 +32,7 @@ class User extends HiveObject {
     email: json['email'] as String,
     name: json['name'] as String,
     balance: (json['balance'] as num?)?.toDouble() ?? 0.0,
+    password: json['password'] as String? ?? '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -35,14 +40,16 @@ class User extends HiveObject {
     'email': email,
     'name': name,
     'balance': balance,
+    'password': password,
   };
 
-  User copyWith({String? id, String? email, String? name, double? balance}) {
+  User copyWith({String? id, String? email, String? name, double? balance, String? password}) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       balance: balance ?? this.balance,
+      password: password ?? this.password,
     );
   }
 
@@ -54,9 +61,10 @@ class User extends HiveObject {
           id == other.id &&
           email == other.email &&
           name == other.name &&
-          balance == other.balance;
+          balance == other.balance &&
+          password == other.password;
 
   @override
   int get hashCode =>
-      id.hashCode ^ email.hashCode ^ name.hashCode ^ balance.hashCode;
+      id.hashCode ^ email.hashCode ^ name.hashCode ^ balance.hashCode ^ password.hashCode;
 }

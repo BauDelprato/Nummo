@@ -57,7 +57,6 @@ class AuthProvider extends ChangeNotifier {
     try {
       final user = await _service.register(email, password, name);
       if (user != null) {
-        _user = user;
         _setLoading(false);
         return true;
       } else {
