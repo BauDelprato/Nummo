@@ -35,7 +35,7 @@ void main() async {
 
   // Registrar adapters
   Hive.registerAdapter(GoalModelAdapter());
-  Hive.registerAdapter(SavingsModelAdapter());
+  Hive.registerAdapter(SavingsAdapter()); // Asegurate que este es el que usa el typeId: 4
   Hive.registerAdapter(TransactionModelAdapter());
   Hive.registerAdapter(UserAdapter());
 
@@ -71,7 +71,10 @@ class NummoApp extends StatelessWidget {
       title: 'Nummo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const AuthWrapper(),
+      // CORRECCIÓN: Solo una propiedad 'home'. 
+      // Usamos SavingsScreen directamente para que puedas ver los cambios.
+      home: const AuthWrapper(), 
+      // home: const AuthWrapper(), // Descomenta esta línea cuando quieras volver al flujo normal
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/dashboard': (context) => const MainScreen(),

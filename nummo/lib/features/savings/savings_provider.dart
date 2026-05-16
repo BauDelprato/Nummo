@@ -1,17 +1,18 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'savings_service.dart';
 import 'savings_model.dart';
 
 class SavingsProvider extends ChangeNotifier {
   final SavingsService _service;
-  double _totalSavings = 0.0;
-  List<SavingsModel> _entries = [];
+  Savings _savings = Savings();
   bool _isLoading = false;
-  StreamSubscription? _subscription;
 
-  double get totalSavings => _totalSavings;
-  List<SavingsModel> get entries => _entries;
+  Savings get savings => _savings;
+  double get totalSaved => _savings.totalSaved;
+  double get targetAmount => _savings.targetAmount;
+  List<double> get depositHistory => _savings.depositHistory;
+  double get progressPercentage => _savings.progressPercentage;
+  bool get isTargetReached => _savings.isTargetReached;
   bool get isLoading => _isLoading;
 
   SavingsProvider(this._service) {
@@ -21,19 +22,31 @@ class SavingsProvider extends ChangeNotifier {
   Future<void> _init() async {
     _setLoading(true);
     await _service.init();
-    _totalSavings = _service.totalSavings;
-    _entries = _service.getAllEntries();
-    _subscription = _service.totalSavingsStream.listen((total) {
-      _totalSavings = total;
-      _entries = _service.getAllEntries();
-      notifyListeners();
-    });
+    _savings = _service.getSavings();
     _setLoading(false);
   }
 
-  Future<void> addSavings(double amount, {String? description}) async {
+  Future<void> addMoney(double amount) async {
+    if (amount <= 0) return;
+
     _setLoading(true);
-    await _service.addSavings(amount, description: description);
+    _savings.totalSaved += amount;
+    _savings.depositHistory.add(amount);
+    await _service.updateSavings(_savings);
+    _setLoading(false);
+  }
+
+  Future<void> setTarget(double amount) async {
+    _setLoading(true);
+    _savings.targetAmount = amount;
+    await _service.updateSavings(_savings);
+    _setLoading(false);
+  }
+
+  Future<void> resetSavings() async {
+    _setLoading(true);
+    _savings = Savings();
+    await _service.updateSavings(_savings);
     _setLoading(false);
   }
 
@@ -44,7 +57,6 @@ class SavingsProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _subscription?.cancel();
     _service.dispose();
     super.dispose();
   }

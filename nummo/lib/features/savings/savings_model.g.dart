@@ -6,36 +6,33 @@ part of 'savings_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SavingsModelAdapter extends TypeAdapter<SavingsModel> {
+class SavingsAdapter extends TypeAdapter<Savings> {
   @override
-  final int typeId = 1;
+  final int typeId = 4;
 
   @override
-  SavingsModel read(BinaryReader reader) {
+  Savings read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return SavingsModel(
-      id: fields[0] as String,
-      amount: fields[1] as double,
-      date: fields[2] as DateTime,
-      description: fields[3] as String?,
+    return Savings(
+      totalSaved: fields[0] as double,
+      targetAmount: fields[1] as double,
+      depositHistory: (fields[2] as List?)?.cast<double>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, SavingsModel obj) {
+  void write(BinaryWriter writer, Savings obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.amount)
-      ..writeByte(2)
-      ..write(obj.date)
       ..writeByte(3)
-      ..write(obj.description);
+      ..writeByte(0)
+      ..write(obj.totalSaved)
+      ..writeByte(1)
+      ..write(obj.targetAmount)
+      ..writeByte(2)
+      ..write(obj.depositHistory);
   }
 
   @override
@@ -44,7 +41,7 @@ class SavingsModelAdapter extends TypeAdapter<SavingsModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SavingsModelAdapter &&
+      other is SavingsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

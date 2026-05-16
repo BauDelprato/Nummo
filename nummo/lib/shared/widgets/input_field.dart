@@ -4,14 +4,16 @@ class CustomInputField extends StatelessWidget {
   final String label;
   final bool isRequired;
   final bool isPassword;
-  final Widget? suffixIcon; // Para poner el ícono del ojito si hace falta
+  final Widget? suffixIcon; 
+  final TextEditingController? controller; // Agregamos el controlador
 
   const CustomInputField({
     super.key,
     required this.label,
-    this.isRequired = false, // Por defecto no es obligatorio
-    this.isPassword = false, // Por defecto muestra el texto normal
+    this.isRequired = false,
+    this.isPassword = false, 
     this.suffixIcon,
+    this.controller, // Lo pedimos en el constructor
   });
 
   @override
@@ -19,7 +21,6 @@ class CustomInputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. TÍTULO Y ASTERISCO
         RichText(
           text: TextSpan(
             text: label,
@@ -37,31 +38,27 @@ class CustomInputField extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 8), // Espacio entre el texto y la caja
+        const SizedBox(height: 8),
 
-        // 2. CAJA DE TEXTO
         TextField(
-          obscureText: isPassword, // Si es true, pone los puntitos (***)
+          controller: controller, // Lo conectamos
+          obscureText: isPassword,
           decoration: InputDecoration(
             filled: true,
-            // Aquí pones el color celestito de fondo de tu diseño
             fillColor: const Color(0xFFB3E5FC), 
             suffixIcon: suffixIcon,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            
-            // Borde cuando NO está seleccionado
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.blueAccent, width: 1),
             ),
-            // Borde cuando haces tap para escribir
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.blue, width: 2),
             ),
           ),
         ),
-        const SizedBox(height: 16), // Espacio final para que no se peguen entre sí
+        const SizedBox(height: 16),
       ],
     );
   }

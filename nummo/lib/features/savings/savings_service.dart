@@ -1,46 +1,27 @@
-import 'dart:async';
-import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'savings_model.dart';
 
 class SavingsService {
-  static const String _boxName = 'savings';
-  late Box<SavingsModel> _box;
-  final _uuid = const Uuid();
-
-  final _savingsController = StreamController<double>.broadcast();
-  Stream<double> get totalSavingsStream => _savingsController.stream;
+  static const String _boxName = 'savings_v2';
+  static const String _savingsKey = 'current_savings';
+  late Box<Savings> _box;
 
   Future<void> init() async {
-    _box = await Hive.openBox<SavingsModel>(_boxName);
-    _notify();
+    _box = await Hive.openBox<Savings>(_boxName);
+    if (!_box.containsKey(_savingsKey)) {
+      await _box.put(_savingsKey, Savings());
+    }
   }
 
-  Future<void> addSavings(double amount, {String? description}) async {
-    final entry = SavingsModel(
-      id: _uuid.v4(),
-      amount: amount,
-      date: DateTime.now(),
-      description: description,
-    );
-    await _box.put(entry.id, entry);
-    _notify();
+  Savings getSavings() {
+    return _box.get(_savingsKey) ?? Savings();
   }
 
-  double get totalSavings {
-    return _box.values.fold(0.0, (sum, s) => sum + s.amount);
-  }
-
-  List<SavingsModel> getAllEntries() {
-    return _box.values.toList();
-  }
-
-  void _notify() {
-    _savingsController.add(totalSavings);
+  Future<void> updateSavings(Savings savings) async {
+    await _box.put(_savingsKey, savings);
   }
 
   Future<void> dispose() async {
-    await _savingsController.close();
     await _box.close();
   }
 }
